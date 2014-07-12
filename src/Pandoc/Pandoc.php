@@ -10,6 +10,8 @@
 
 namespace Pandoc;
 
+use Symfony\Component\Process\Process;
+
 /**
  * Naive wrapper for haskell's pandoc utility
  *
@@ -95,30 +97,29 @@ class Pandoc
      * @param string $executable Path to the pandoc executable
      * @throws PandocException
      */
-    public function __construct($tempDir, $executable = null)
+    public function __construct($tempDir, $executable = NULL)
     {
-        $this->tmpFile = sprintf(
-            "%s/%s", $tempDir, uniqid("pandoc")
-        );
+        $this->tmpFile = $tempDir . '/' . uniqid("pandoc");
 
         // Since we can not validate that the command that they give us is
         // *really* pandoc we will just check that its something.
         // If the provide no path to pandoc we will try to find it on our own
         if (!$executable) {
-            exec('which pandoc', $output, $returnVar);
-            if ($returnVar === 0) {
-                $this->executable = $output[0];
-            } else {
-                throw new PandocException('Unable to locate pandoc');
+            $process = new Process('which pandoc');
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new PandocException($process->getErrorOutput());
             }
+
+            $this->executable = $process->getOutput();
+
         } else {
             $this->executable = $executable;
         }
 
-        if (!is_executable($this->executable)) {
-            throw new PandocException('Pandoc executable is not executable');
-        }
     }
+
 
     /**
      * @return string
@@ -127,6 +128,7 @@ class Pandoc
     {
         return $this->tmpFile;
     }
+
 
     /**
      * Run the conversion from one type to another
@@ -141,31 +143,25 @@ class Pandoc
     public function convert($content, $from, $to)
     {
         if (!in_array($from, $this->inputFormats)) {
-            throw new PandocException(
-                sprintf('%s is not a valid input format for pandoc', $from)
-            );
+            throw new PandocException("$from is not a valid input format for pandoc");
         }
 
         if (!in_array($to, $this->outputFormats)) {
-            throw new PandocException(
-                sprintf('%s is not a valid output format for pandoc', $to)
-            );
+            throw new PandocException("$to is not a valid output format for pandoc");
         }
 
         file_put_contents($this->tmpFile, $content);
 
-        $command = sprintf(
-            '%s --from=%s --to=%s %s',
-            $this->executable,
-            $from,
-            $to,
-            $this->tmpFile
-        );
+        $process = new Process("$this->executable $this->tmpFile --from=$from --to=$to -o $this->tmpFile");
+        $process->run();
 
-        exec($command, $output);
+        if (!$process->isSuccessful()) {
+            throw new PandocException($process->getErrorOutput());
+        }
 
         return file_get_contents($this->tmpFile);
     }
+
 
     /**
      * Run the pandoc command with specific options.
@@ -178,6 +174,7 @@ class Pandoc
      * @param string $content The content to run the command on
      * @param array $options The options to use
      *
+     * @throws PandocException
      * @return string The returned content
      */
     public function runWith($content, $options)
@@ -243,7 +240,7 @@ class Pandoc
             }
 
 
-            if (null === $value) {
+            if (NULL === $value) {
                 $commandOptions[] = "--$key";
                 continue;
             }
@@ -253,21 +250,28 @@ class Pandoc
 
         file_put_contents($this->tmpFile, $content);
 
-        $command = sprintf(
-            "%s %s %s",
+        $command = array(
             $this->executable,
+            $this->tmpFile,
             implode(' ', $commandOptions),
-            $this->tmpFile
         );
 
-        exec($command, $output);
-
-        if (isset($format)) {
-            return file_get_contents($this->tmpFile . '.' . $format);
-        } else {
-            return file_get_contents($this->tmpFile);
+        if(!isset($format)) {
+            $command[] = "-o $this->tmpFile";
         }
+
+        $process = new Process(implode(' ', $command));
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new PandocException($process->getErrorOutput());
+        }
+
+        return isset($format)
+            ? file_get_contents($this->tmpFile . '.' . $format)
+            : file_get_contents($this->tmpFile);
     }
+
 
     /**
      * Remove the temporary files that were created
@@ -283,14 +287,22 @@ class Pandoc
         }
     }
 
+
     /**
-     * Returns the pandoc version number
-     *
      * @return string
+     * @throws PandocException
      */
     public function getVersion()
     {
-        exec(sprintf('%s --version', $this->executable), $output);
+        $process = new Process("$this->executable --version");
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            throw new PandocException($process->getErrorOutput());
+        }
+
+        $output = $process->getOutput();
+        $output = explode("\n", $output);
 
         return trim(str_replace('pandoc', '', $output[0]));
     }

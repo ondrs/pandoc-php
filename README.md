@@ -1,7 +1,7 @@
 Pandoc PHP
 ==========
 
-[![Build Status](https://secure.travis-ci.org/ryakad/pandoc-php.png)](http://travis-ci.org/ryakad/pandoc-php)
+[![Build Status](https://secure.travis-ci.org/ondrs/pandoc-php.png)](http://travis-ci.org/ondrs/pandoc-php)
 
 Pandoc PHP is a naive wrapper for the Pandoc command. Pandoc is a Haskell
 program that allows you to convert documents from one format to another. For
@@ -20,7 +20,7 @@ The recommended method to installing Pandoc PHP is with [composer](http://getcom
 ```json
 {
     "require": {
-        "ryakad/pandoc-php": "dev-master"
+        "ondrs/pandoc-php": "dev-master"
     }
 }
 ```
@@ -28,7 +28,7 @@ The recommended method to installing Pandoc PHP is with [composer](http://getcom
 Once installed you can start converting your content to other formats like:
 
 ```php
-$pandoc = new Pandoc();
+$pandoc = new Pandoc('/path/to/temp/dir');
 $html = $pandoc->convert("#Hello Pandoc", "markdown_github", "html");
 // $html == "<h1>Hello Pandoc</h1>"
 ```
@@ -41,7 +41,7 @@ This method takes two arguments, content to convert and an array containing opti
 The options array can hold any of the pandoc command line options, see `pandoc --help`.
 
 ```php
-$pandoc = new Pandoc\Pandoc();
+$pandoc = new Pandoc\Pandoc('/path/to/temp/dir');
 $options = array(
     "from"  => "markdown",
     "to"    => "html",

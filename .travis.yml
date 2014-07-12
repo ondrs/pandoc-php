@@ -1,17 +1,18 @@
-language:
-    - php
+language: php
 
 php:
-    - 5.4
-    - 5.5
+  - 5.3
+  - 5.4
+  - 5.5
 
 before_script:
-    - composer install --dev
-    - sudo apt-get install ghc
-    - sudo apt-get install haskell-platform
-    - cabal update
-    - cabal install pandoc
-    - export PATH="$PATH:$HOME/.cabal/bin"
-    - pandoc --version
+  - composer self-update
+  - composer install --no-interaction --prefer-source --dev
+  - sudo apt-get install ghc
+  - sudo apt-get install haskell-platform
+  - cabal update
+  - cabal install pandoc
+  - export PATH="$PATH:$HOME/.cabal/bin"
+  - pandoc --version
 
-script: phpunit
+script: VERBOSE=true ./tests/test.sh -s tests/Pandoc/

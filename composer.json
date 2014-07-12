@@ -1,9 +1,17 @@
 {
-    "name": "ryakad/pandoc-php",
-    "license": "MIT",
-    "autoload": {
-        "psr-0": {
-            "Pandoc": "src"
-        }
-    }
+  "name": "ondrs/pandoc",
+  "type": "library",
+  "description": "PHP pandoc",
+  "keywords": ["pandoc", "wrapper"],
+  "license": ["MIT"],
+  "require": {
+    "php": ">=5.3.0",
+    "symfony/process": "v2.5.1"
+  },
+  "require-dev": {
+    "nette/tester": "@dev"
+  },
+  "autoload": {
+    "classmap": ["src/"]
+  }
 }
