@@ -8,7 +8,11 @@ php:
 before_script:
   - composer self-update
   - composer install --no-interaction --prefer-source --dev
-  - sudo apt-get install pandoc
+  - sudo apt-get install ghc
+  - sudo apt-get install haskell-platform
+  - cabal update
+  - cabal install pandoc
+  - export PATH="$PATH:$HOME/.cabal/bin"
   - pandoc --version
 
 script: ./vendor/bin/tester -c ./tests/php.ini-unix ./tests/Pandoc/
