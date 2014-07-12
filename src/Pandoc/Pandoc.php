@@ -10,7 +10,6 @@
 
 namespace Pandoc;
 
-use Symfony\Component\Process\Process;
 use Symfony\Component\Process\ProcessBuilder;
 
 /**
@@ -126,6 +125,16 @@ class Pandoc
 
     }
 
+    /**
+     * @param string $tmpFile
+     * @return $this
+     */
+    public function setTmpFile($tmpFile)
+    {
+        $this->tmpFile = $tmpFile;
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -212,72 +221,134 @@ class Pandoc
             'slideous'
         );
 
+        $builder = new ProcessBuilder();
+        $builder->setPrefix(array(
+            $this->executable,
+            $this->tmpFile,
+        ));
+
+        $args = array();
+
         foreach ($options as $key => $value) {
             if ($key == 'to' && in_array($value, $extFilesFormat)) {
-                $commandOptions[] = '-s -S -o ' . $this->tmpFile . '.' . $value;
+                $args = array_merge($args, array(
+                    '-s',
+                    '-S',
+                    '-o',
+                    "$this->tmpFile.$value",
+                ));
                 $format = $value;
                 continue;
             } else if ($key == 'to' && in_array($value, $extFilesHtmlSlide)) {
-                $commandOptions[] = '-s -t ' . $value . ' -o ' . $this->tmpFile . '.html';
+                $args = array_merge($args, array(
+                    '-s',
+                    '-t',
+                    $value,
+                    '-o',
+                    "$this->tmpFile.html",
+                ));
                 $format = 'html';
                 continue;
             } else if ($key == 'to' && $value == 'epub3') {
-                $commandOptions[] = '-S -o ' . $this->tmpFile . '.epub';
+                $args = array_merge($args, array(
+                    '-S',
+                    '-o',
+                    "$this->tmpFile.epub",
+                ));
                 $format = 'epub';
                 continue;
             } else if ($key == 'to' && $value == 'beamer') {
-                $commandOptions[] = '-s -t beamer -o ' . $this->tmpFile . '.pdf';
+                $args = array_merge($args, array(
+                    '-s',
+                    '-t',
+                    'beamer',
+                    '-o',
+                    "$this->tmpFile.pdf",
+                ));
                 $format = 'pdf';
                 continue;
             } else if ($key == 'to' && $value == 'latex') {
-                $commandOptions[] = '-s -o ' . $this->tmpFile . '.tex';
+                $args = array_merge($args, array(
+                    '-s',
+                    '-o',
+                    "$this->tmpFile.tex",
+                ));
                 $format = 'tex';
                 continue;
             } else if ($key == 'to' && $value == 'rst') {
-                $commandOptions[] = '-s -t rst --toc -o ' . $this->tmpFile . '.text';
+                $args = array_merge($args, array(
+                    '-s',
+                    '-t',
+                    'rst',
+                    '--toc',
+                    '-o',
+                    "$this->tmpFile.text",
+                ));
                 $format = 'text';
                 continue;
             } else if ($key == 'to' && $value == 'rtf') {
-                $commandOptions[] = '-s -o ' . $this->tmpFile . '.' . $value;
+                $args = array_merge($args, array(
+                    '-s',
+                    '-o',
+                    "$this->tmpFile.$value",
+                ));
                 $format = $value;
                 continue;
             } else if ($key == 'to' && $value == 'docbook') {
-                $commandOptions[] = '-s -S -t docbook -o ' . $this->tmpFile . '.db';
+                $args = array_merge($args, array(
+                    '-s',
+                    '-S',
+                    '-t',
+                    'docbook',
+                    '-o',
+                    "$this->tmpFile.db",
+                ));
                 $format = 'db';
                 continue;
             } else if ($key == 'to' && $value == 'context') {
-                $commandOptions[] = '-s -t context -o ' . $this->tmpFile . '.tex';
+                $args = array_merge($args, array(
+                    '-s',
+                    '-t',
+                    'context',
+                    '-o',
+                    "$this->tmpFile.tex",
+                ));
                 $format = 'tex';
                 continue;
             } else if ($key == 'to' && $value == 'asciidoc') {
-                $commandOptions[] = '-s -S -t asciidoc -o ' . $this->tmpFile . '.txt';
+                $args = array_merge($args, array(
+                    '-s',
+                    '-S',
+                    '-t',
+                    'asciidoc',
+                    '-o',
+                    "$this->tmpFile.txt",
+                ));
                 $format = 'txt';
                 continue;
             }
 
 
             if (NULL === $value) {
-                $commandOptions[] = "--$key";
+                $args[] = "--$key";
                 continue;
             }
 
-            $commandOptions[] = "--$key=$value";
+            $args[] = "--$key=$value";
         }
 
         file_put_contents($this->tmpFile, $content);
         @chmod($this->tmpFile, 0777);
 
-        $command = array(
-            $this->executable,
-            $this->tmpFile,
-            implode(' ', $commandOptions),
-        );
 
-        if(!isset($format)) {
-            $command[] = "-o $this->tmpFile";
+        if (!isset($format)) {
+            $args[] = "-o";
+            $args[] = $this->tmpFile;
         }
 
-        $process = new Process(implode(' ', $command));
+        $process = $builder->setArguments($args)
+            ->getProcess();
+
         $process->run();
 
         if (!$process->isSuccessful()) {
