@@ -11,6 +11,7 @@
 namespace Pandoc;
 
 use Symfony\Component\Process\Process;
+use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * Naive wrapper for haskell's pandoc utility
@@ -105,7 +106,12 @@ class Pandoc
         // *really* pandoc we will just check that its something.
         // If the provide no path to pandoc we will try to find it on our own
         if (!$executable) {
-            $process = new Process('which pandoc');
+            $builder = new ProcessBuilder(array(
+                'which',
+                'pandoc',
+            ));
+
+            $process = $builder->getProcess();
             $process->run();
 
             if (!$process->isSuccessful()) {
@@ -153,7 +159,16 @@ class Pandoc
         file_put_contents($this->tmpFile, $content);
         @chmod($this->tmpFile, 0777);
 
-        $process = new Process("$this->executable $this->tmpFile --from=$from --to=$to -o $this->tmpFile");
+        $builder = new ProcessBuilder(array(
+            $this->executable,
+            $this->tmpFile,
+            "--from=$from",
+            "--to=$to",
+            "-o",
+            $this->tmpFile
+        ));
+
+        $process = $builder->getProcess();
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -296,7 +311,12 @@ class Pandoc
      */
     public function getVersion()
     {
-        $process = new Process("$this->executable --version");
+        $builder = new ProcessBuilder(array(
+            $this->executable,
+            '--version'
+        ));
+
+        $process = $builder->getProcess();
         $process->run();
 
         if (!$process->isSuccessful()) {
