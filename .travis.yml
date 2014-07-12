@@ -11,4 +11,4 @@ before_script:
   - sudo apt-get install pandoc
   - pandoc --version
 
-script: VERBOSE=true ./tests/test.sh -s tests/Pandoc/
+script: VERBOSE=true ./tests/test.sh -s ./tests/Pandoc/
