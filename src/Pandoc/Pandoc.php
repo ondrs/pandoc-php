@@ -151,6 +151,7 @@ class Pandoc
         }
 
         file_put_contents($this->tmpFile, $content);
+        @chmod($this->tmpFile, 0777);
 
         $process = new Process("$this->executable $this->tmpFile --from=$from --to=$to -o $this->tmpFile");
         $process->run();
@@ -249,6 +250,7 @@ class Pandoc
         }
 
         file_put_contents($this->tmpFile, $content);
+        @chmod($this->tmpFile, 0777);
 
         $command = array(
             $this->executable,
