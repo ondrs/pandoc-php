@@ -1,5 +1,5 @@
 {
-  "name": "ondrs/pandoc",
+  "name": "ondrs/pandoc-php",
   "type": "library",
   "description": "PHP pandoc",
   "keywords": ["pandoc", "wrapper"],
