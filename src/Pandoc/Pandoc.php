@@ -36,19 +36,19 @@ class Pandoc
      * @var array
      */
     private $inputFormats = array(
-        "native",
-        "json",
-        "markdown",
-        "markdown_strict",
-        "markdown_phpextra",
-        "markdown_github",
-        "markdown_mmd",
-        "rst",
-        "mediawiki",
-        "docbook",
-        "textile",
-        "html",
-        "latex"
+        'native',
+        'json',
+        'markdown',
+        'markdown_strict',
+        'markdown_phpextra',
+        'markdown_github',
+        'markdown_mmd',
+        'rst',
+        'mediawiki',
+        'docbook',
+        'textile',
+        'html',
+        'latex'
     );
 
     /**
@@ -56,38 +56,38 @@ class Pandoc
      * @var array
      */
     private $outputFormats = array(
-        "native",
-        "json",
-        "docx",
-        "odt",
-        "epub",
-        "epub3",
-        "fb2",
-        "html",
-        "html5",
-        "s5",
-        "slidy",
-        "slideous",
-        "dzslides",
-        "docbook",
-        "opendocument",
-        "latex",
-        "beamer",
-        "context",
-        "texinfo",
-        "man",
-        "markdown",
-        "markdown_strict",
-        "markdown_phpextra",
-        "markdown_github",
-        "markdown_mmd",
-        "plain",
-        "rst",
-        "mediawiki",
-        "textile",
-        "rtf",
-        "org",
-        "asciidoc"
+        'native',
+        'json',
+        'docx',
+        'odt',
+        'epub',
+        'epub3',
+        'fb2',
+        'html',
+        'html5',
+        's5',
+        'slidy',
+        'slideous',
+        'dzslides',
+        'docbook',
+        'opendocument',
+        'latex',
+        'beamer',
+        'context',
+        'texinfo',
+        'man',
+        'markdown',
+        'markdown_strict',
+        'markdown_phpextra',
+        'markdown_github',
+        'markdown_mmd',
+        'plain',
+        'rst',
+        'mediawiki',
+        'textile',
+        'rtf',
+        'org',
+        'asciidoc'
     );
 
     /**
@@ -99,7 +99,7 @@ class Pandoc
      */
     public function __construct($tempDir, $executable = NULL)
     {
-        $this->tmpFile = $tempDir . '/' . uniqid("pandoc");
+        $this->tmpFile = $tempDir . '/' . uniqid('pandoc');
 
         // Since we can not validate that the command that they give us is
         // *really* pandoc we will just check that its something.
