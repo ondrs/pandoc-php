@@ -370,8 +370,10 @@ class Pandoc
             @unlink($this->tmpFile);
         }
 
-        foreach (glob($this->tmpFile . '.*') as $filename) {
-            @unlink($filename);
+        if($list = glob($this->tmpFile . '.*')) {
+            foreach ($list as $filename) {
+                @unlink($filename);
+            }
         }
     }
 
