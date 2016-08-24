@@ -3,6 +3,7 @@
  * Pandoc PHP
  *
  * Copyright (c) Ryan Kadwell <ryan@riaka.ca>
+ * Copyright (c) Ondrej Plsek <plsek.o@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -370,7 +371,7 @@ class Pandoc
             @unlink($this->tmpFile);
         }
 
-        if($list = glob($this->tmpFile . '.*')) {
+        if ($list = glob($this->tmpFile . '.*')) {
             foreach ($list as $filename) {
                 @unlink($filename);
             }
