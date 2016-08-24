@@ -20,7 +20,7 @@ The recommended method to installing Pandoc PHP is with [composer](http://getcom
 ```json
 {
     "require": {
-        "ondrs/pandoc-php": "dev-master"
+        "ondrs/pandoc-php": "v0.1.0"
     }
 }
 ```
