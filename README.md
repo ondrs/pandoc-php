@@ -1,7 +1,9 @@
 Pandoc PHP
 ==========
 
+[![Total Downloads](https://poser.pugx.org/ondrs/pandoc-php/downloads)](https://packagist.org/packages/ondrs/pandoc-php)
 [![Build Status](https://travis-ci.org/ondrs/pandoc-php.svg?branch=master)](https://travis-ci.org/ondrs/pandoc-php)
+[![Latest Stable Version](https://poser.pugx.org/ondrs/pandoc-php/v/stable)](https://packagist.org/packages/ondrs/pandoc-php)
 
 Pandoc PHP is a naive wrapper for the Pandoc command. Pandoc is a Haskell
 program that allows you to convert documents from one format to another. For
